@@ -16,7 +16,7 @@ podTemplate(
         stage('checkout git') {
             container('maven') {
                 checkout ([
-                    : 'GitSCM', 
+                    $class: 'GitSCM', 
                     branches: [[name: '*/master']], 
                     doGenerateSubmoduleConfigurations: false, 
                     extensions: [], 
