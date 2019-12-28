@@ -1,0 +1,43 @@
+def label = "jnlp-slave1"
+def repoUrl = "http://172.16.200.34:9258/svn/repos/开发/WEB/教育产品部/武警医院考勤管理系统/WEB_WYKQ_V1.0/trunk"
+def gitUrl = "https://github.com/feawrf/Java-war-dev.git"
+def gitCredentialsId = '2'
+podTemplate(
+    label: label, 
+    cloud: 'kubernetes',
+    containers: [
+        containerTemplate(
+            name: 'maven', 
+            image: 'cnych/jenkins:ali-maven-3.3.9-jdk-8', 
+            ttyEnabled: true, 
+            command: 'cat'
+    )]) {
+    node(label){
+        stage('checkout git') {
+            container('maven') {
+                checkout ([
+                    : 'GitSCM', 
+                    branches: [[name: '*/master']], 
+                    doGenerateSubmoduleConfigurations: false, 
+                    extensions: [], 
+                    submoduleCfg: [], 
+                    userRemoteConfigs: [[
+                        credentialsId: gitCredentialsId, 
+                        url: gitUrl
+                ]]])
+                sh 'mvn package -Dmaven.test.skip=true'
+            }
+        }
+        stage('maven build') {
+            sh 'echo 2'
+        }
+        stage('docker build') {
+            sh 'echo 1'
+        }
+        stage('build'){
+            script {
+            echo repoUrl
+            }
+        }
+    }
+}
