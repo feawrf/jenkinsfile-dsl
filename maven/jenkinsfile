@@ -1,5 +1,4 @@
 def label = "jnlp-slave1"
-def repoUrl = "http://172.16.200.34:9258/svn/repos/开发/WEB/教育产品部/武警医院考勤管理系统/WEB_WYKQ_V1.0/trunk"
 def gitUrl = "https://github.com/feawrf/Java-war-dev.git"
 def gitCredentialsId = '2'
 podTemplate(
@@ -36,7 +35,7 @@ podTemplate(
         }
         stage('build'){
             script {
-            echo repoUrl
+            echo gitUrl
             }
         }
     }
