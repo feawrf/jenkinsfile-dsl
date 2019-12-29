@@ -11,7 +11,13 @@ podTemplate(
             image: 'cnych/jenkins:ali-maven-3.3.9-jdk-8', 
             ttyEnabled: true, 
             command: 'cat'
-    )]) {
+    )],
+    volumes: [
+        hostPathVolume(
+            hostPath: '/minikube_data/jenkins/compile', 
+            mountPath: '/home/jenkins/compile'
+    )]
+) {
     node(label){
         stage('checkout git') {
             container('maven') {
@@ -25,7 +31,11 @@ podTemplate(
                         credentialsId: gitCredentialsId, 
                         url: gitUrl
                 ]]])
-                sh 'mvn package -Dmaven.test.skip=true'
+                def time_now = sh(label: '获取时间',script: "date '+%Y%m%d%H%M%S'", returnStdout: true)
+                sh(label: '开始编译',script: "mvn package -Dmaven.test.skip=true")
+                packageLocal = sh(label: '获取war包路径',script: "ls ${WORKSPACE}/target/*.war", returnStdout: true)
+                packageName = PAGES_LOACL.split('/')[-1]
+                sh(label: '移出war包',script: "mv ${packageLocal}/target/*.war /home/jenkins/${packageName}_${time_now}")
             }
         }
         stage('maven build') {
