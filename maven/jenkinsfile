@@ -21,7 +21,7 @@ podTemplate(
     node(label){
         stage('checkout git') {
             container('maven') {
-                checkout ([
+                def scmVars = checkout ([
                     $class: 'GitSCM', 
                     branches: [[name: '*/master']], 
                     doGenerateSubmoduleConfigurations: false, 
@@ -31,11 +31,13 @@ podTemplate(
                         credentialsId: gitCredentialsId, 
                         url: gitUrl
                 ]]])
+                echo scmVars.GIT_REVISION
                 def time_now = sh(label: '获取时间',script: "date '+%Y%m%d%H%M%S'", returnStdout: true)
                 sh(label: '开始编译',script: "mvn package -Dmaven.test.skip=true")
                 packageLocal = sh(label: '获取war包路径',script: "ls ${WORKSPACE}/target/*.war", returnStdout: true).split('\n')[0]
                 packageName = packageLocal.split('/')[-1]
                 sh(label: '移出war包',script: "mv ${packageLocal} /home/jenkins/compile/${packageName}_${time_now}")
+                
             }
         }
         stage('maven build') {
