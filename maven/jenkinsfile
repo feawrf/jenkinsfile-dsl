@@ -31,8 +31,8 @@ podTemplate(
                         credentialsId: gitCredentialsId, 
                         url: gitUrl
                 ]]])
-                def GIT_REVISION = GIT_Revision()
-                echo GIT_REVISION
+                gitRevision = sh(label: '获取git版本',script: "tail -n 1 .git/FETCH_HEAD  | awk '{print $1}'", returnStdout: true).split('\n')[0]
+                echo gitRevision
                 def time_now = sh(label: '获取时间',script: "date '+%Y%m%d%H%M%S'", returnStdout: true)
                 sh(label: '开始编译',script: "mvn package -Dmaven.test.skip=true")
                 packageLocal = sh(label: '获取war包路径',script: "ls ${WORKSPACE}/target/*.war", returnStdout: true).split('\n')[0]
