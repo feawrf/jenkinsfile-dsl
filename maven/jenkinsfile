@@ -31,7 +31,7 @@ podTemplate(
                         credentialsId: gitCredentialsId, 
                         url: gitUrl
                 ]]])
-                echo scmVars.GIT_REVISION
+                echo scmVars.GIT_Revision
                 def time_now = sh(label: '获取时间',script: "date '+%Y%m%d%H%M%S'", returnStdout: true)
                 sh(label: '开始编译',script: "mvn package -Dmaven.test.skip=true")
                 packageLocal = sh(label: '获取war包路径',script: "ls ${WORKSPACE}/target/*.war", returnStdout: true).split('\n')[0]
