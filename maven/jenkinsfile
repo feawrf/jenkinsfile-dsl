@@ -1,6 +1,7 @@
 def label = "jnlp-slave0"
 def gitUrl = "https://github.com/feawrf/Java-war-dev.git"
 def gitCredentialsId = '2'
+def  dateNew = today()
 podTemplate(
     label: label, 
     cloud: 'kubernetes',
@@ -25,6 +26,7 @@ podTemplate(
                         url: gitUrl
                 ]]])
                 sh 'mvn package -Dmaven.test.skip=true'
+                echo dateNew
             }
         }
         stage('maven build') {
