@@ -1,5 +1,5 @@
 def label = "jnlp-slave0"
-def gitUrl = "https://github.com/feawrf/Java-war-dev.git"
+///def gitUrl = "https://github.com/feawrf/Java-war-dev.git"
 def gitCredentialsId = '2'
 
 podTemplate(
