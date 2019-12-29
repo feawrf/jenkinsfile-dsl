@@ -19,8 +19,8 @@ podTemplate(
     )]
 ) {
     node(label){
-        stage('checkout git') {
-            container('maven') {
+        container('maven') {
+            stage('checkout git') {
                 checkout ([
                     $class: 'GitSCM', 
                     branches: [[name: '*/master']], 
@@ -32,16 +32,18 @@ podTemplate(
                         url: gitUrl
                 ]]])
             }
-        }
-        stage('maven build') {
-            sh(label: '开始编译',script: "mvn package -Dmaven.test.skip=true")
-        }
-        stage('移出war包') {
-            def gitRevision = sh(label: '获取git版本',script: "tail -n 1 .git/FETCH_HEAD  | awk '{print \$1}'", returnStdout: true).split('\n')[0]
-            def time_now = sh(label: '获取时间',script: "date '+%Y%m%d%H%M%S'", returnStdout: true)                
-            packageLocal = sh(label: '获取war包路径',script: "ls ${WORKSPACE}/target/*.war", returnStdout: true).split('\n')[0]
-            packageName = packageLocal.split('/')[-1]
-            sh(label: '移出war包',script: "mv ${packageLocal} /home/jenkins/compile/${packageName}_${gitRevision}_${time_now}")
+        
+            stage('maven build') {
+                sh(label: '开始编译',script: "mvn package -Dmaven.test.skip=true")
+            }
+            
+            stage('移出war包') {
+                def gitRevision = sh(label: '获取git版本',script: "tail -n 1 .git/FETCH_HEAD  | awk '{print \$1}'", returnStdout: true).split('\n')[0]
+                def time_now = sh(label: '获取时间',script: "date '+%Y%m%d%H%M%S'", returnStdout: true)                
+                packageLocal = sh(label: '获取war包路径',script: "ls ${WORKSPACE}/target/*.war", returnStdout: true).split('\n')[0]
+                packageName = packageLocal.split('/')[-1]
+                sh(label: '移出war包',script: "mv ${packageLocal} /home/jenkins/compile/${packageName}_${gitRevision}_${time_now}")
+            }
         }
     }
 }
